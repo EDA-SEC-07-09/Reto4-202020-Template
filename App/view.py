@@ -42,12 +42,55 @@ operación seleccionada.
 # ___________________________________________________
 #  Variables
 # ___________________________________________________
-
+servicefile ="201801-1-citibike-tripdata.csv"
+initialStation = None
+recursionLimit = 20000
 
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
-
+def printMenu():
+    print("\n")
+    print("*******************************************")
+    print("Bienvenido")
+    print("0- Salir")
+    print("1- Inicializar Analizador")
+    print("2- Cargar información Analizador")
+    print("3- REQ. 1: Cantidad de clusters de Viajes")
+    print("4- REQ. 2: Ruta turística Circular ")
+    print("5- REQ. 3: Estaciones críticas")
+    print("6- REQ. 4: Ruta turística por resistencia")
+    print("7- Req. 5: Recomendador de Rutas ")
+    print("8- REQ. 6: Ruta de interés turístico ")
+    print("9- REQ. 7: Identificación de Estaciones para Publicidad")
+    print("10-REQ. 8: Identificación de Bicicletas para Mantenimiento")
+    print("*******************************************")
 """
 Menu principal
 """
+while True:
+    printMenu()
+    inputs = input('Seleccione una opción para continuar\n>')
+    if int(inputs[0]) == 1:
+        print("\nInicializando....")
+    elif int(inputs[0]) == 2:
+        pass
+    elif int(inputs[0]) == 3:
+        pass
+    elif int(inputs[0]) == 4:
+        pass
+    elif int(inputs[0]) == 5:
+        pass
+    elif int(inputs[0]) == 6:
+        pass
+    elif int(inputs[0]) == 7:
+        pass
+    elif int(inputs[0]) == 8:
+        pass
+    elif int(inputs[0]) == 9:
+        pass
+    elif int(inputs[0]) == 10:
+        pass
+    else:
+        sys.exit(0)
+sys.exit(0)
