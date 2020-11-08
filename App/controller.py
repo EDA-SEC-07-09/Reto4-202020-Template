@@ -25,6 +25,7 @@
  """
 
 import config as cf
+import os 
 from App import model
 import csv
 
@@ -60,8 +61,8 @@ def loadTrips(citibike):
     for filename in os.listdir(cf.data_dir):
         if filename.endswith('.csv'):
             print('Cargando archivo: ' + filename)
-            loadFile(analyzer, filename)
-    return analyzer
+            loadFile(citibike, filename)
+    return citibike
 
 def loadFile(citibike, tripfile):
     tripfile = cf.data_dir + tripfile
@@ -70,7 +71,6 @@ def loadFile(citibike, tripfile):
     for trip in input_file:
         model.addTrip(citibike, trip)
     return citibike
-
 
 # ___________________________________________________
 #  Funciones para consultas

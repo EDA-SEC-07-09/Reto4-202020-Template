@@ -29,6 +29,7 @@ from DISClib.ADT import map as m
 from DISClib.ADT import list as lt
 from DISClib.DataStructures import listiterator as it
 from DISClib.Algorithms.Graphs import scc
+from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
 assert config
@@ -43,10 +44,49 @@ de creacion y consulta sobre las estructuras de datos.
 # -----------------------------------------------------
 
 # Funciones para agregar informacion al grafo
+def newAnalyzer():
+    citibike={"graph":None}
+    citibike["graph"] = gr.newGraph(datastructure='ADJ_LIST',
+                                  directed=True,
+                                  size=1000,
+                                  comparefunction=compareStations)
+    return citibike
+
+def addTrip(citibike, trip):
+    origin = trip["start station id"]
+    destination = trip["end station id"]
+    duration = int(trip["tripduration"])
+    addStation(citibike, origin)
+    addStation(citibike, destination)
+    addConnection(citibike, origin, destination, duration)
+
+def addStation(citibike, stationid):
+    """
+    Adiciona una estación como un vertice del grafo
+    """
+    if not gr.containsVertex(citibike["graph"], stationid):
+            gr.insertVertex(citibike["graph"], stationid)
+    return citibike
+
+def addConnection(citibike, origin, destination, duration):
+    """
+    Adiciona un arco entre dos estaciones
+    """
+    edge = gr.getEdge(citibike["graph"], origin, destination)
+    if edge is None:
+        gr.addEdge(citibike["graph"], origin, destination, duration)
+    
+
+    return citibike
+
+
 
 # ==============================
 # Funciones de consulta
 # ==============================
+def fuertemente_conectados(grahp):
+    pass
+
 
 # ==============================
 # Funciones Helper
@@ -55,3 +95,12 @@ de creacion y consulta sobre las estructuras de datos.
 # ==============================
 # Funciones de Comparacion
 # ==============================
+def compareStations(estacion1,estacion2):
+    estacion2=me.getKey(estacion2)
+    if (estacion1 == estacion2):
+        return 0
+    elif (estacion1 > estacion2):
+        return 1
+    else:
+        return -1
+

@@ -68,13 +68,20 @@ def printMenu():
 """
 Menu principal
 """
+def optionTwo():
+    controller.loadTrips(cont)
+    sys.setrecursionlimit(recursionLimit)
+    print(cont)
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n>')
     if int(inputs[0]) == 1:
         print("\nInicializando....")
+        cont=controller.init()
     elif int(inputs[0]) == 2:
-        pass
+        executiontime = timeit.timeit(optionTwo, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
     elif int(inputs[0]) == 3:
         pass
     elif int(inputs[0]) == 4:

@@ -294,7 +294,6 @@ def getEdge(graph, vertexa, vertexb):
 def containsVertex(graph, vertex):
     """
     Retorna si el vertice vertex esta presente en el grafo
-
     Args:
         graph: El grafo sobre el que se ejecuta la operacion
         vertex: Vertice que se busca
