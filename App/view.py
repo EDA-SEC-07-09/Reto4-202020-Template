@@ -44,7 +44,7 @@ operación seleccionada.
 # ___________________________________________________
 servicefile ="201801-1-citibike-tripdata.csv"
 initialStation = None
-recursionLimit = 20000
+recursionLimit = 30000
 
 # ___________________________________________________
 #  Menu principal
@@ -68,22 +68,38 @@ def printMenu():
 """
 Menu principal
 """
+
 def optionTwo():
     controller.loadTrips(cont)
+    numedges = controller.totalConnections(cont)
+    numvertex = controller.totalStations(cont)
+    print('Numero de viajes:' + str(cont["viajes"]))
+    print('Numero de vertices: ' + str(numvertex))
+    print('Numero de arcos: ' + str(numedges))
+    print('El limite de recursion actual: ' + str(sys.getrecursionlimit()))
     sys.setrecursionlimit(recursionLimit)
-    print(cont)
+    print('El limite de recursion se ajusta a: ' + str(recursionLimit))
+
+def optionThree():
+    id1=input("Ingrese una estación de origen:")
+    id2=input("Ingrese una estación de destino:")
+    print (controller.CantidadCluster(cont,id1,id2))
+
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n>')
     if int(inputs[0]) == 1:
         print("\nInicializando....")
         cont=controller.init()
+
     elif int(inputs[0]) == 2:
         executiontime = timeit.timeit(optionTwo, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
 
     elif int(inputs[0]) == 3:
-        pass
+        executiontime = timeit.timeit(optionThree, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
     elif int(inputs[0]) == 4:
         pass
     elif int(inputs[0]) == 5:

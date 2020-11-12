@@ -45,7 +45,7 @@ de creacion y consulta sobre las estructuras de datos.
 
 # Funciones para agregar informacion al grafo
 def newAnalyzer():
-    citibike={"graph":None}
+    citibike={"graph":None, "viajes":0}
     citibike["graph"] = gr.newGraph(datastructure='ADJ_LIST',
                                   directed=True,
                                   size=1000,
@@ -59,6 +59,7 @@ def addTrip(citibike, trip):
     addStation(citibike, origin)
     addStation(citibike, destination)
     addConnection(citibike, origin, destination, duration)
+    addViaje(citibike)
 
 def addStation(citibike, stationid):
     """
@@ -68,6 +69,10 @@ def addStation(citibike, stationid):
             gr.insertVertex(citibike["graph"], stationid)
     return citibike
 
+def incremental(promediada,division,suma):
+    promedio_nuevo=((promediada*division)+suma)/(division+1)
+    return promedio_nuevo
+
 def addConnection(citibike, origin, destination, duration):
     """
     Adiciona un arco entre dos estaciones
@@ -75,17 +80,45 @@ def addConnection(citibike, origin, destination, duration):
     edge = gr.getEdge(citibike["graph"], origin, destination)
     if edge is None:
         gr.addEdge(citibike["graph"], origin, destination, duration)
-    
-
+        edge = gr.getEdge(citibike["graph"], origin, destination)
+        edge["division"]=1
+    else:
+        duracion=incremental(edge["weight"],edge["division"],duration+edge["weight"])
+        edge["division"]+=1
+        edge["weight"]=duracion      
     return citibike
 
 
+def addViaje(citibike):
+    citibike["viajes"]+=1
+    return citibike["viajes"]
 
 # ==============================
 # Funciones de consulta
 # ==============================
-def fuertemente_conectados(grahp):
-    pass
+def CantidadCluster(citibike,station1,station2):
+    clusteres={"No. de clusteres:":None,"Las estaciones están en el mismo cluster:":None}
+    sc = scc.KosarajuSCC(citibike["graph"])
+    cant = scc.connectedComponents(sc)
+    cond = sameCC(sc,station1,station2)
+    clusteres["No. de clusteres:"]=cant
+    clusteres["Las estaciones están en el mismo cluster:"]=cond
+    return clusteres
+
+def sameCC(sc, station1, station2):
+    return scc.stronglyConnected(sc, station1, station2)
+
+def totalConnections(citibike):
+    """
+    Retorna el total arcos del grafo
+    """
+    return gr.numEdges(citibike["graph"])
+
+def totalStations(citibike):
+    """
+    Retorna el total de estaciones (vertices) del grafo
+    """
+    return gr.numVertices(citibike["graph"])
 
 
 # ==============================

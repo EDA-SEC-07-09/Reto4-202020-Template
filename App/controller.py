@@ -72,10 +72,24 @@ def loadFile(citibike, tripfile):
         model.addTrip(citibike, trip)
     return citibike
 
+
+
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
 
+def totalStations(citibike):
+    """
+    Total de paradas de bicicleta
+    """
+    return model.totalStations(citibike)
 
-def CantidadCluster(id1,id2):
-    return model.CantidadCluster(id1,id2)
+
+def totalConnections(citibike):
+    """
+    Total de enlaces entre las paradas
+    """
+    return model.totalConnections(citibike)
+
+def CantidadCluster(citibike,id1,id2):
+    return model.CantidadCluster(citibike,id1,id2)
