@@ -25,6 +25,7 @@
  """
 
 import config as cf
+import os 
 from App import model
 import csv
 
@@ -60,8 +61,8 @@ def loadTrips(citibike):
     for filename in os.listdir(cf.data_dir):
         if filename.endswith('.csv'):
             print('Cargando archivo: ' + filename)
-            loadFile(analyzer, filename)
-    return analyzer
+            loadFile(citibike, filename)
+    return citibike
 
 def loadFile(citibike, tripfile):
     tripfile = cf.data_dir + tripfile
@@ -72,10 +73,32 @@ def loadFile(citibike, tripfile):
     return citibike
 
 
+
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
 
+def totalStations(citibike):
+    """
+    Total de paradas de bicicleta
+    """
+    return model.totalStations(citibike)
 
-def CantidadCluster(id1,id2):
-    return model.CantidadCluster(id1,id2)
+
+def totalConnections(citibike):
+    """
+    Total de enlaces entre las paradas
+    """
+    return model.totalConnections(citibike)
+
+def CantidadCluster(citibike,id1,id2):
+    return model.CantidadCluster(citibike,id1,id2)
+
+def EstacionesCriticas(citibike):
+    return model.EstacionesCriticas(citibike)
+
+def Resistencia(citibike,StationId,MaxTime):
+    return model.Resistencia(citibike,StationId,MaxTime)
+
+def EstacionesParaPublicidad(citibike,e1,e2):
+    return model.EstacionesParaPublicidad(citibike,e1,e2)
