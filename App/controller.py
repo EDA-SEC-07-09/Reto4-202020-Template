@@ -25,7 +25,7 @@
  """
 
 import config as cf
-import os 
+import os
 from App import model
 import csv
 
@@ -59,24 +59,29 @@ def init():
 
 def loadTrips(citibike):
     for filename in os.listdir(cf.data_dir):
-        if filename.endswith('.csv'):
-            print('Cargando archivo: ' + filename)
+        if filename.endswith(".csv"):
+            print("Cargando archivo: " + filename)
             loadFile(citibike, filename)
     return citibike
 
+
 def loadFile(citibike, tripfile):
     tripfile = cf.data_dir + tripfile
-    input_file = csv.DictReader(open(tripfile, encoding="utf-8"),
-                                delimiter=",")
+    input_file = csv.DictReader(open(tripfile, encoding="utf-8"), delimiter=",")
+    a_ver = input("¿Desea que se carguen las dependencias del Bono?,Si o No\n")
     for trip in input_file:
-        model.addTrip(citibike, trip)
+        if a_ver == "Si":
+            model.addTrip(citibike, trip)
+            model.addtomap(citibike, trip)
+        elif a_ver == "No":
+            model.addTrip(citibike, trip)
     return citibike
-
 
 
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
+
 
 def totalStations(citibike):
     """
@@ -91,5 +96,10 @@ def totalConnections(citibike):
     """
     return model.totalConnections(citibike)
 
-def CantidadCluster(citibike,id1,id2):
-    return model.CantidadCluster(citibike,id1,id2)
+
+def CantidadCluster(citibike, id1, id2):
+    return model.CantidadCluster(citibike, id1, id2)
+
+
+grafo_vacio = init()
+loadTrips(grafo_vacio)

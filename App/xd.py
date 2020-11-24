@@ -380,3 +380,236 @@ def compara_fechas(fecha1, fecha2):
         return 1
     else:
         return -1
+
+
+"""
+ * Copyright 2020, Departamento de sistemas y Computación
+ * Universidad de Los Andes
+ *
+ *
+ * Desarrolado para el curso ISIS1225 - Estructuras de Datos y Algoritmos
+ *
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Contribución de:
+ *
+ * Dario Correal
+ *
+ """
+
+import config as cf
+import os
+from App import model
+import csv
+
+"""
+El controlador se encarga de mediar entre la vista y el modelo.
+Existen algunas operaciones en las que se necesita invocar
+el modelo varias veces o integrar varias de las respuestas
+del modelo en una sola respuesta.  Esta responsabilidad
+recae sobre el controlador.
+"""
+
+# ___________________________________________________
+#  Inicializacion del catalogo
+# ___________________________________________________
+
+
+def init():
+    """
+    Llama la funcion de inicializacion  del modelo.
+    """
+    # analyzer es utilizado para interactuar con el modelo
+    analyzer = model.newAnalyzer()
+    return analyzer
+
+
+# ___________________________________________________
+#  Funciones para la carga de datos y almacenamiento
+#  de datos en los modelos
+# ___________________________________________________
+
+
+def loadTrips(citibike):
+    for filename in os.listdir(cf.data_dir):
+        if filename.endswith(".csv"):
+            print("Cargando archivo: " + filename)
+            loadFile(citibike, filename)
+    return citibike
+
+
+def loadFile(citibike, tripfile):
+    tripfile = cf.data_dir + tripfile
+    input_file = csv.DictReader(open(tripfile, encoding="utf-8"), delimiter=",")
+    a_ver = input("¿Desea que se carguen las dependencias del Bono?,Si o No\n")
+    for trip in input_file:
+        if a_ver == "Si":
+            model.addTrip(citibike, trip)
+            model.addtomap(citibike, trip)
+        elif a_ver == "No":
+            model.addTrip(citibike, trip)
+    return citibike
+
+
+# ___________________________________________________
+#  Funciones para consultas
+# ___________________________________________________
+
+
+def totalStations(citibike):
+    """
+    Total de paradas de bicicleta
+    """
+    return model.totalStations(citibike)
+
+
+def totalConnections(citibike):
+    """
+    Total de enlaces entre las paradas
+    """
+    return model.totalConnections(citibike)
+
+
+def CantidadCluster(citibike, id1, id2):
+    return model.CantidadCluster(citibike, id1, id2)
+
+
+grafo_vacio = init()
+loadTrips(grafo_vacio)
+
+"""
+ * Copyright 2020, Departamento de sistemas y Computación
+ * Universidad de Los Andes
+ *
+ *
+ * Desarrolado para el curso ISIS1225 - Estructuras de Datos y Algoritmos
+ *
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Contribución de:
+ *
+ * Dario Correal
+ *
+ """
+
+
+import sys
+import config
+from App import controller
+from DISClib.ADT import stack
+import timeit
+
+assert config
+
+"""
+La vista se encarga de la interacción con el usuario.
+Presenta el menu de opciones  y  por cada seleccion
+hace la solicitud al controlador para ejecutar la
+operación seleccionada.
+"""
+
+# ___________________________________________________
+#  Variables
+# ___________________________________________________
+servicefile = "201801-1-citibike-tripdata.csv"
+initialStation = None
+recursionLimit = 30000
+
+# ___________________________________________________
+#  Menu principal
+# ___________________________________________________
+def printMenu():
+    print("\n")
+    print("*******************************************")
+    print("Bienvenido")
+    print("0- Salir")
+    print("1- Inicializar Analizador")
+    print("2- Cargar información Analizador")
+    print("3- REQ. 1: Cantidad de clusters de Viajes")
+    print("4- REQ. 2: Ruta turística Circular ")
+    print("5- REQ. 3: Estaciones críticas")
+    print("6- REQ. 4: Ruta turística por resistencia")
+    print("7- Req. 5: Recomendador de Rutas ")
+    print("8- REQ. 6: Ruta de interés turístico ")
+    print("9- REQ. 7: Identificación de Estaciones para Publicidad")
+    print("10-REQ. 8: Identificación de Bicicletas para Mantenimiento")
+    print("*******************************************")
+
+
+"""
+Menu principal
+"""
+
+
+def optionTwo():
+    controller.loadTrips(cont)
+    numedges = controller.totalConnections(cont)
+    numvertex = controller.totalStations(cont)
+    print("Numero de viajes:" + str(cont["viajes"]))
+    print("Numero de vertices: " + str(numvertex))
+    print("Numero de arcos: " + str(numedges))
+    print("El limite de recursion actual: " + str(sys.getrecursionlimit()))
+    sys.setrecursionlimit(recursionLimit)
+    print("El limite de recursion se ajusta a: " + str(recursionLimit))
+
+
+def optionThree():
+    id1 = input("Ingrese una estación de origen:")
+    id2 = input("Ingrese una estación de destino:")
+    print(controller.CantidadCluster(cont, id1, id2))
+
+
+while True:
+    printMenu()
+    inputs = input("Seleccione una opción para continuar\n>")
+    if int(inputs[0]) == 1:
+        print("\nInicializando....")
+        cont = controller.init()
+
+    elif int(inputs[0]) == 2:
+        executiontime = timeit.timeit(optionTwo, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
+    elif int(inputs[0]) == 3:
+        executiontime = timeit.timeit(optionThree, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
+    elif int(inputs[0]) == 4:
+        pass
+    elif int(inputs[0]) == 5:
+        pass
+    elif int(inputs[0]) == 6:
+        pass
+    elif int(inputs[0]) == 7:
+        pass
+    elif int(inputs[0]) == 8:
+        pass
+    elif int(inputs[0]) == 9:
+        pass
+    elif int(inputs[0]) == 10:
+        pass
+    else:
+        sys.exit(0)
+sys.exit(0)
