@@ -85,6 +85,36 @@ def loadFile(citibike, tripfile):
 # ___________________________________________________
 
 
+def totalStations(citibike):
+    """
+    Total de paradas de bicicleta
+    """
+    return model.totalStations(citibike)
+
+
+def totalConnections(citibike):
+    """
+    Total de enlaces entre las paradas
+    """
+    return model.totalConnections(citibike)
+
+
+def CantidadCluster(citibike, id1, id2):
+    return model.CantidadCluster(citibike, id1, id2)
+
+
+def EstacionesCriticas(citibike):
+    return model.EstacionesCriticas(citibike)
+
+
+def Resistencia(citibike, StationId, MaxTime):
+    return model.Resistencia(citibike, StationId, MaxTime)
+
+
+def RecomendadorRutas(citibike, e1, e2):
+    return model.RecomendadorRutas(citibike, e1, e2)
+
+
 def requerimento2(citibike, estacion, rango1, rango2):
     xd = model.revisar(citibike, estacion, rango1, rango2)
     final_v2 = lt.newList("ARRAY_LIST")
@@ -112,19 +142,5 @@ def bono8(citibike, fecha, ide):
     return xd
 
 
-def totalStations(citibike):
-    """
-    Total de paradas de bicicleta
-    """
-    return model.totalStations(citibike)
-
-
-def totalConnections(citibike):
-    """
-    Total de enlaces entre las paradas
-    """
-    return model.totalConnections(citibike)
-
-
-def CantidadCluster(citibike, id1, id2):
-    return model.CantidadCluster(citibike, id1, id2)
+def EstacionesParaPublicidad(citibike, e1, e2):
+    return model.EstacionesParaPublicidad(citibike, e1, e2)

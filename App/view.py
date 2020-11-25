@@ -30,6 +30,7 @@ import config
 from DISClib.ADT import list as lt
 from App import controller
 from DISClib.ADT import stack
+from DISClib.ADT import map as m
 import timeit
 
 assert config
@@ -113,6 +114,53 @@ def optionFour():
         print("-----------------------------------")
 
 
+def optionFive():
+    print(controller.EstacionesCriticas(cont))
+
+
+def optionSix():
+    print("Los weight son la duración de cada trayecto dados en segundos")
+    t = input(
+        "Ingrese el tiempo máximo, en  minutos, que cree que va a durar montando bicicleta:"
+    )
+    tiempo = t * 60
+    station = input("Ingrese la id de la estación de inicio:")
+    print(controller.Resistencia(cont, station, tiempo))
+
+
+def optionSeven():
+    print("Escoja el rango de edad de acuerdo al numeral indicado:")
+    print(
+        "No existe rango de 0 a 10 años, dado que no hay usuarios registrados con dichas edades."
+    )
+    print("1. 11-20")
+    print("2. 21-30")
+    print("3. 31-40")
+    print("4. 41-50")
+    print("5. 51-60")
+    print("6. 60+")
+    seleccion = int(input("Presione un número:"))
+    if seleccion == 1:
+        e1 = 11
+        e2 = 20
+    elif seleccion == 2:
+        e1 = 21
+        e2 = 30
+    elif seleccion == 3:
+        e1 = 31
+        e2 = 40
+    elif seleccion == 4:
+        e1 = 41
+        e2 = 50
+    elif seleccion == 5:
+        e1 = 51
+        e2 = 60
+    elif seleccion == 6:
+        e1 = 61
+        e2 = 200
+    print(controller.RecomendadorRutas(cont, e1, e2))
+
+
 def optionEight():
     lat1 = float(input("Latitud inicial:\n"))
     lon1 = float(input("Longitud inicial:\n"))
@@ -140,10 +188,43 @@ def optionEight():
     print("-----------------------------------")
 
 
+def optionNine():
+    print("Escoja el rango de edad de acuerdo al numeral indicado:")
+    print(
+        "No existe rango de 0 a 10 años, dado que no hay usuarios registrados con dichas edades."
+    )
+    print("1. 11-20")
+    print("2. 21-30")
+    print("3. 31-40")
+    print("4. 41-50")
+    print("5. 51-60")
+    print("6. 60+")
+    seleccion = int(input("Presione un número:"))
+    if seleccion == 1:
+        e1 = 11
+        e2 = 20
+    elif seleccion == 2:
+        e1 = 21
+        e2 = 30
+    elif seleccion == 3:
+        e1 = 31
+        e2 = 40
+    elif seleccion == 4:
+        e1 = 41
+        e2 = 50
+    elif seleccion == 5:
+        e1 = 51
+        e2 = 60
+    elif seleccion == 6:
+        e1 = 61
+        e2 = 200
+    print(controller.EstacionesParaPublicidad(cont, e1, e2))
+
+
 def optionTen():
     fecha = input("Digite la fecha en el sig formato DD-MM-YYYY\n")
     ide = input("Digite la ID de la bicicleta\n")
-    todo = controller.bono8(cont, fecha="2018-01-03", ide="31256")
+    todo = controller.bono8(cont, fecha, ide)
     print("---------------------------------")
     print("Ruta")
     print("---------------------------------")
@@ -166,25 +247,27 @@ while True:
     elif int(inputs) == 2:
         executiontime = timeit.timeit(optionTwo, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
-
     elif int(inputs) == 3:
         executiontime = timeit.timeit(optionThree, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
-
     elif int(inputs) == 4:
         executiontime = timeit.timeit(optionFour, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
     elif int(inputs) == 5:
-        pass
+        executiontime = timeit.timeit(optionFive, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
     elif int(inputs) == 6:
-        pass
+        executiontime = timeit.timeit(optionSix, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
     elif int(inputs) == 7:
-        pass
+        executiontime = timeit.timeit(optionSeven, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
     elif int(inputs) == 8:
         executiontime = timeit.timeit(optionEight, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
     elif int(inputs) == 9:
-        pass
+        executiontime = timeit.timeit(optionNine, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
     elif int(inputs) == 10:
         executiontime = timeit.timeit(optionTen, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
