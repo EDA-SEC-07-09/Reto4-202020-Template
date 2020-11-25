@@ -27,9 +27,11 @@
 
 import sys
 import config
+from DISClib.ADT import list as lt
 from App import controller
 from DISClib.ADT import stack
 import timeit
+
 assert config
 
 """
@@ -42,7 +44,7 @@ operación seleccionada.
 # ___________________________________________________
 #  Variables
 # ___________________________________________________
-servicefile ="201801-1-citibike-tripdata.csv"
+servicefile = "201801-1-citibike-tripdata.csv"
 initialStation = None
 recursionLimit = 30000
 
@@ -65,55 +67,127 @@ def printMenu():
     print("9- REQ. 7: Identificación de Estaciones para Publicidad")
     print("10-REQ. 8: Identificación de Bicicletas para Mantenimiento")
     print("*******************************************")
+
+
 """
 Menu principal
 """
+
 
 def optionTwo():
     controller.loadTrips(cont)
     numedges = controller.totalConnections(cont)
     numvertex = controller.totalStations(cont)
-    print('Numero de viajes:' + str(cont["viajes"]))
-    print('Numero de vertices: ' + str(numvertex))
-    print('Numero de arcos: ' + str(numedges))
-    print('El limite de recursion actual: ' + str(sys.getrecursionlimit()))
+    print("Numero de viajes:" + str(cont["viajes"]))
+    print("Numero de vertices: " + str(numvertex))
+    print("Numero de arcos: " + str(numedges))
+    print("El limite de recursion actual: " + str(sys.getrecursionlimit()))
     sys.setrecursionlimit(recursionLimit)
-    print('El limite de recursion se ajusta a: ' + str(recursionLimit))
+    print("El limite de recursion se ajusta a: " + str(recursionLimit))
+
 
 def optionThree():
-    id1=input("Ingrese una estación de origen:")
-    id2=input("Ingrese una estación de destino:")
-    print (controller.CantidadCluster(cont,id1,id2))
+    id1 = input("Ingrese una estación de origen:")
+    id2 = input("Ingrese una estación de destino:")
+    print(controller.CantidadCluster(cont, id1, id2))
+
+
+def optionFour():
+    estacion = input("Digite la estación desde la cual desea partir.\n")
+    rango1 = int(input("Limite inferior del rango:\n"))
+    rango2 = int(input("Limite superior del rango:\n"))
+    todo = controller.requerimento2(cont, estacion, rango1, rango2)
+
+    print("-----------------------------------")
+    print("Cantidad de rutas:", lt.size(todo))
+    print("-----------------------------------")
+    for i in range(1, lt.size(todo) + 1):
+        print("Ruta:", i)
+        print("-----------------------------------")
+        elemento = lt.getElement(todo, i)
+        tiempo = 0
+        for e in elemento:
+            print(e["vertexA"], "------------>", e["vertexB"])
+            tiempo += e["weight"]
+        print("En:", round(tiempo, 3), "minutos")
+        print("-----------------------------------")
+
+
+def optionEight():
+    lat1 = float(input("Latitud inicial:\n"))
+    lon1 = float(input("Longitud inicial:\n"))
+    lat2 = float(input("Latitud final:\n"))
+    lon2 = float(input("Longitud final:\n"))
+    todo = controller.requerimento6(
+        cont,
+        lat1,
+        lon1,
+        lat2,
+        lon2,
+    )
+    estacion_inicial = todo[1]
+    estacion_final = todo[2]
+    print("----------------------------")
+    print("Estacion Inicial", estacion_inicial, "Estación Final:", estacion_final)
+    total = 0
+    print("-----------------------------------")
+    for i in range(1, lt.size(todo[0]) + 1):
+        elemento = lt.getElement(todo[0], i)
+        print(elemento["vertexA"] + "-------->" + elemento["vertexB"])
+        total += elemento["weight"]
+    print("-----------------------------------")
+    print("En un tiempo de:", round(total / 60, 2), "minutos")
+    print("-----------------------------------")
+
+
+def optionTen():
+    fecha = input("Digite la fecha en el sig formato DD-MM-YYYY\n")
+    ide = input("Digite la ID de la bicicleta\n")
+    todo = controller.bono8(cont, fecha="2018-01-03", ide="31256")
+    print("---------------------------------")
+    print("Ruta")
+    print("---------------------------------")
+    for i in range(1, lt.size(todo[2]) + 1):
+        elemento = lt.getElement(todo[2], i)
+        print(elemento["vertexA"] + "------>" + elemento["vertexB"])
+    print("---------------------------------")
+    print("Tiempo estacionada:", round(todo[1] / 60 ** 2, 4), "Horas")
+    print("Tiempo usada", round(todo[0] / (60 ** 2), 4), "Horas")
+    print("---------------------------------")
+
 
 while True:
     printMenu()
-    inputs = input('Seleccione una opción para continuar\n>')
-    if int(inputs[0]) == 1:
+    inputs = input("Seleccione una opción para continuar\n>")
+    if int(inputs) == 1:
         print("\nInicializando....")
-        cont=controller.init()
+        cont = controller.init()
 
-    elif int(inputs[0]) == 2:
+    elif int(inputs) == 2:
         executiontime = timeit.timeit(optionTwo, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
 
-    elif int(inputs[0]) == 3:
+    elif int(inputs) == 3:
         executiontime = timeit.timeit(optionThree, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
 
-    elif int(inputs[0]) == 4:
+    elif int(inputs) == 4:
+        executiontime = timeit.timeit(optionFour, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+    elif int(inputs) == 5:
         pass
-    elif int(inputs[0]) == 5:
+    elif int(inputs) == 6:
         pass
-    elif int(inputs[0]) == 6:
+    elif int(inputs) == 7:
         pass
-    elif int(inputs[0]) == 7:
+    elif int(inputs) == 8:
+        executiontime = timeit.timeit(optionEight, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+    elif int(inputs) == 9:
         pass
-    elif int(inputs[0]) == 8:
-        pass
-    elif int(inputs[0]) == 9:
-        pass
-    elif int(inputs[0]) == 10:
-        pass
+    elif int(inputs) == 10:
+        executiontime = timeit.timeit(optionTen, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
     else:
         sys.exit(0)
 sys.exit(0)

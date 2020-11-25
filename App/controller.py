@@ -27,6 +27,11 @@
 import config as cf
 import os
 from App import model
+from DISClib.ADT import list as lt
+from DISClib.DataStructures import mapentry as me
+from DISClib.ADT import orderedmap as om
+from DISClib.ADT import map as m
+from DISClib.ADT.graph import gr
 import csv
 
 """
@@ -68,19 +73,43 @@ def loadTrips(citibike):
 def loadFile(citibike, tripfile):
     tripfile = cf.data_dir + tripfile
     input_file = csv.DictReader(open(tripfile, encoding="utf-8"), delimiter=",")
-    a_ver = input("¿Desea que se carguen las dependencias del Bono?,Si o No\n")
     for trip in input_file:
-        if a_ver == "Si":
-            model.addTrip(citibike, trip)
-            model.addtomap(citibike, trip)
-        elif a_ver == "No":
-            model.addTrip(citibike, trip)
+        model.addtomap(citibike, trip)
+        model.add_lat_lo(citibike, trip)
+        model.addTrip(citibike, trip)
     return citibike
 
 
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
+
+
+def requerimento2(citibike, estacion, rango1, rango2):
+    xd = model.revisar(citibike, estacion, rango1, rango2)
+    final_v2 = lt.newList("ARRAY_LIST")
+    final = []
+    for i in range(1, lt.size(xd) + 1):
+        revisa = []
+        elemento = lt.getElement(xd, i)
+        for e in range(1, lt.size(elemento) + 1):
+            elemento_2 = lt.getElement(elemento, e)
+            revisa.append(elemento_2)
+        if revisa not in final:
+            final.append(revisa)
+    for i in final:
+        lt.addLast(final_v2, i)
+    return final_v2
+
+
+def requerimento6(citibike, lat1, lon1, lat2, lon2):
+    xd = model.ruta_interes_turistico(citibike, lat1, lon1, lat2, lon2)
+    return xd
+
+
+def bono8(citibike, fecha, ide):
+    xd = model.para_mantenimiento(citibike, fecha, ide)
+    return xd
 
 
 def totalStations(citibike):
@@ -99,7 +128,3 @@ def totalConnections(citibike):
 
 def CantidadCluster(citibike, id1, id2):
     return model.CantidadCluster(citibike, id1, id2)
-
-
-grafo_vacio = init()
-loadTrips(grafo_vacio)

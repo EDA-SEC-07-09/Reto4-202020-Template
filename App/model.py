@@ -24,6 +24,7 @@
  *
  """
 import config
+from math import radians, cos, sin, asin, sqrt
 from DISClib.ADT.graph import gr
 from DISClib.ADT import map as m
 from DISClib.ADT import list as lt
@@ -34,6 +35,7 @@ from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dfs as dfs
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Graphs import dijsktra as djk
+from DISClib.Algorithms.Sorting import mergesort as mge
 import datetime
 from DISClib.Utils import error as error
 
@@ -50,7 +52,7 @@ de creacion y consulta sobre las estructuras de datos.
 
 # Funciones para agregar informacion al grafo
 def newAnalyzer():
-    citibike = {"graph": None, "viajes": 0, "mapa_fecha": None}
+    citibike = {"graph": None, "viajes": 0, "mapa_fecha": None, "mapa_lat_lon": None}
     citibike["graph"] = gr.newGraph(
         datastructure="ADJ_LIST",
         directed=True,
@@ -58,6 +60,9 @@ def newAnalyzer():
         comparefunction=compareStations,
     )
     citibike["mapa_fecha"] = om.newMap("BST", compara_fechas)
+    citibike["mapa_lat_lon"] = m.newMap(
+        maptype="PROBING", comparefunction=compareStations
+    )
     return citibike
 
 
@@ -90,7 +95,7 @@ def addtomap(citibike, trip):
         ruta = gr.newGraph(
             datastructure="ADJ_LIST",
             directed=True,
-            size=1000,
+            size=50,
             comparefunction=compareStations,
         )
         addTripV2(ruta, trip)
@@ -104,7 +109,7 @@ def addtomap(citibike, trip):
             ruta = gr.newGraph(
                 datastructure="ADJ_LIST",
                 directed=True,
-                size=1000,
+                size=50,
                 comparefunction=compareStations,
             )
             addTripV2(ruta, trip)
@@ -167,6 +172,58 @@ def addConnection(citibike, origin, destination, duration):
     return citibike
 
 
+def EXadd_lat_lon(mapa, llave, valor):
+    existe = m.get(mapa, llave)
+    if existe is None:
+        m.put(mapa, llave, valor)
+
+
+def add_lat_lo(citibike, trip):
+    mapa = citibike["mapa_lat_lon"]
+
+    estacion_inicio = trip["start station id"]
+    latitud_inicio = trip["start station latitude"]
+    longitud_inicio = trip["start station longitude"]
+    llave = latitud_inicio + "," + longitud_inicio
+
+    estacion_final = trip["end station id"]
+    latitud_final = trip["end station latitude"]
+    longitud_final = trip["end station longitude"]
+    llavev2 = latitud_final + "," + longitud_final
+
+    existe = m.get(mapa, "todos")
+
+    if existe is None:
+        lista_owo = lt.newList("ARRAY_LIST")
+        a_ver = []
+        if llave not in a_ver:
+            a_ver.append(llave)
+        if llavev2 not in a_ver:
+            a_ver.append(llavev2)
+
+        lt.addLast(lista_owo, a_ver)
+        for i in a_ver:
+            lt.addLast(lista_owo, i)
+        m.put(mapa, "todos", lista_owo)
+    else:
+        existe = me.getValue(existe)
+        lista = lt.getElement(existe, 1)
+        lt.removeFirst(existe)
+        no_estan = []
+        if llave not in lista:
+            lista.append(llave)
+            no_estan.append(llave)
+        if llavev2 not in lista:
+            lista.append(llavev2)
+            no_estan.append(llavev2)
+
+        lt.addFirst(existe, lista)
+        for i in no_estan:
+            lt.addLast(existe, i)
+    EXadd_lat_lon(mapa, llave, estacion_inicio)
+    EXadd_lat_lon(mapa, llavev2, estacion_final)
+
+
 def addViaje(citibike):
     citibike["viajes"] += 1
     return citibike["viajes"]
@@ -175,6 +232,94 @@ def addViaje(citibike):
 # ==============================
 # Funciones de consulta
 # ==============================
+def ruta_interes_turistico(citibike, lat1, lon1, lat2, lon2):
+    elegido_inicial = {"coincidencia": None, "cantidad": None}
+    elegido_final = {"coincidencia": None, "cantidad": None}
+    ruta_final = lt.newList("ARRAY_LIST")
+
+    lista = me.getValue(m.get(citibike["mapa_lat_lon"], "todos"))
+    lista = lt.getElement(lista, 1)
+    for i in lista:
+        a_ver = i.split(",")
+        latitud = float(a_ver[0])
+        longitud = float(a_ver[1])
+        distancia_entre_puntos = distance(lat1, latitud, lon1, longitud)
+        if elegido_inicial["coincidencia"] is None:
+            elegido_inicial["coincidencia"] = i
+            elegido_inicial["cantidad"] = distancia_entre_puntos
+        else:
+            if distancia_entre_puntos < elegido_inicial["cantidad"]:
+                elegido_inicial["coincidencia"] = i
+                elegido_inicial["cantidad"] = distancia_entre_puntos
+
+    for i in lista:
+        a_ver = i.split(",")
+        latitud = float(a_ver[0])
+        longitud = float(a_ver[1])
+        distancia_entre_puntos = distance(lat2, latitud, lon2, longitud)
+        if elegido_final["coincidencia"] is None:
+            elegido_final["coincidencia"] = i
+            elegido_final["cantidad"] = distancia_entre_puntos
+        else:
+            if distancia_entre_puntos < elegido_final["cantidad"]:
+                elegido_final["coincidencia"] = i
+                elegido_final["cantidad"] = distancia_entre_puntos
+    vertice_inicio = me.getValue(
+        m.get(citibike["mapa_lat_lon"], elegido_inicial["coincidencia"])
+    )
+    vertice_final = me.getValue(
+        m.get(citibike["mapa_lat_lon"], elegido_final["coincidencia"])
+    )
+    ruta = djk.Dijkstra(citibike["graph"], vertice_inicio)
+    ruta = djk.pathTo(ruta, vertice_final)
+    for i in range(1, lt.size(ruta) + 1):
+        owo = sta.pop(ruta)
+        lt.addLast(ruta_final, owo)
+    return ruta_final,vertice_inicio,vertice_final
+
+
+def para_mantenimiento(citibike, fecha, ide):
+    fecha = str_to_python_time(fecha)
+    arbol = om.get(citibike["mapa_fecha"], fecha)
+    arbol = me.getValue(arbol)
+    mapa = m.get(arbol, ide)
+    grafo = me.getValue(mapa)
+    arcos = gr.edges(grafo)
+    horas_organizadas = lt.newList("ARRAY_LIST")
+    camino_organizado = lt.newList("ARRAY_LIST")
+    for i in range(1, lt.size(arcos) + 1):
+        elemento = lt.getElement(arcos, i)
+        lt.addLast(horas_organizadas, elemento["inicio"])
+    mge.mergesort(horas_organizadas, comparador_horas)
+    for i in range(1, lt.size(horas_organizadas) + 1):
+        hora = lt.getElement(horas_organizadas, i)
+        for e in range(1, lt.size(arcos) + 1):
+            arco = lt.getElement(arcos, e)
+            if arco["inicio"] == hora:
+                lt.addLast(camino_organizado, arco)
+    for i in range(1, lt.size(camino_organizado) + 1):
+        elemento = lt.getElement(camino_organizado, i)
+        if i == 1:
+            parqueada = conver_to_seconds(elemento["inicio"])
+            usada = conver_to_seconds(elemento["final"]) - conver_to_seconds(
+                elemento["inicio"]
+            )
+        else:
+
+            usada += conver_to_seconds(elemento["final"]) - conver_to_seconds(
+                elemento["inicio"]
+            )
+
+            parqueada += conver_to_seconds(elemento["inicio"]) - conver_to_seconds(
+                (lt.getElement(camino_organizado, i - 1))["final"]
+            )
+        if i == lt.size(camino_organizado):
+            resta = conver_to_seconds("23:59:59")
+            parqueada += resta - conver_to_seconds(elemento["final"])
+
+    return (usada, parqueada, camino_organizado)
+
+
 def CantidadCluster(citibike, station1, station2):
     clusteres = {
         "No. de clusteres:": None,
@@ -190,6 +335,11 @@ def CantidadCluster(citibike, station1, station2):
 
 def sameCC(sc, station1, station2):
     return scc.stronglyConnected(sc, station1, station2)
+
+
+def suma_fechas(fecha1, fecha2):
+    suma = fecha2 + fecha1
+    return suma
 
 
 def totalConnections(citibike):
@@ -360,6 +510,41 @@ def structure_map():
     return mapa
 
 
+def str_to_python_time(string):
+    xd = datetime.datetime.strptime(string, "%Y-%m-%d")
+    xd = datetime.datetime.date(xd)
+    return xd
+
+
+def str_to_python_hora(hora):
+    xd = datetime.datetime.strptime(hora, "%H:%M:%S")
+    xd = datetime.datetime.time(xd)
+    return xd
+
+
+def distance(lat1, lat2, lon1, lon2):
+
+    # The math module contains a function named
+    # radians which converts from degrees to radians.
+    lon1 = radians(lon1)
+    lon2 = radians(lon2)
+    lat1 = radians(lat1)
+    lat2 = radians(lat2)
+
+    # Haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+
+    c = 2 * asin(sqrt(a))
+
+    # Radius of earth in kilometers. Use 3956 for miles
+    r = 6371
+
+    # calculate the result
+    return c * r
+
+
 # ==============================
 # Funciones de Comparacion
 # ==============================
@@ -371,6 +556,13 @@ def compareStations(estacion1, estacion2):
         return 1
     else:
         return -1
+
+
+def comparador_horas(hora1, hora2):
+    if hora1 < hora2:
+        return True
+    else:
+        return False
 
 
 def compara_fechas(fecha1, fecha2):
