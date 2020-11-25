@@ -29,6 +29,7 @@ import sys
 import config
 from App import controller
 from DISClib.ADT import stack
+from DISClib.ADT import map as m
 import timeit
 assert config
 
@@ -89,10 +90,41 @@ def optionFive():
     print (controller.EstacionesCriticas(cont))
 
 def optionSix():
+    print("Los weight son la duración de cada trayecto dados en segundos")
     t=input("Ingrese el tiempo máximo, en  minutos, que cree que va a durar montando bicicleta:")
     tiempo=t*60
     station=input("Ingrese la id de la estación de inicio:")
     print (controller.Resistencia(cont,station,tiempo))
+
+def optionSeven():
+    print ("Escoja el rango de edad de acuerdo al numeral indicado:")
+    print("No existe rango de 0 a 10 años, dado que no hay usuarios registrados con dichas edades.")
+    print ("1. 11-20")
+    print ("2. 21-30")
+    print ("3. 31-40")
+    print ("4. 41-50")
+    print ("5. 51-60")
+    print ("6. 60+")
+    seleccion=int(input("Presione un número:"))
+    if seleccion==1:
+        e1=11
+        e2=20
+    elif seleccion==2:
+        e1=21
+        e2=30
+    elif seleccion==3:
+        e1=31
+        e2=40
+    elif seleccion==4:
+        e1=41
+        e2=50
+    elif seleccion==5:
+        e1=51
+        e2=60
+    elif seleccion==6:
+        e1=61
+        e2=200
+    print(controller.RecomendadorRutas(cont,e1,e2))
 
 def optionNine():
     print ("Escoja el rango de edad de acuerdo al numeral indicado:")
@@ -134,6 +166,8 @@ while True:
     elif int(inputs[0]) == 2:
         executiontime = timeit.timeit(optionTwo, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
+        h=m.get(cont["year1"],"72")
+        print(h["value"])
 
     elif int(inputs[0]) == 3:
         executiontime = timeit.timeit(optionThree, number=1)
@@ -148,7 +182,8 @@ while True:
         executiontime = timeit.timeit(optionSix, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
     elif int(inputs[0]) == 7:
-        pass
+        executiontime = timeit.timeit(optionSeven, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
     elif int(inputs[0]) == 8:
         pass
     elif int(inputs[0]) == 9:

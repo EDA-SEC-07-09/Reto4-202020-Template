@@ -100,5 +100,8 @@ def EstacionesCriticas(citibike):
 def Resistencia(citibike,StationId,MaxTime):
     return model.Resistencia(citibike,StationId,MaxTime)
 
+def RecomendadorRutas(citibike,e1,e2):
+    return model.RecomendadorRutas(citibike,e1,e2)
+
 def EstacionesParaPublicidad(citibike,e1,e2):
     return model.EstacionesParaPublicidad(citibike,e1,e2)
