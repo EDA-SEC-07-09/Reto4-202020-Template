@@ -101,7 +101,6 @@ def addTrip(citibike, trip):
     addConnection(citibike, origin, destination, duration)
     addElements(citibike, trip, origin, destination)
     addViaje(citibike)
-
     addLlegadaSalida(citibike, origin, destination)
     addAños(citibike, origin, destination, year)
     if suscriptor == "Customer":
@@ -375,18 +374,28 @@ def para_mantenimiento(citibike, fecha, ide):
     mapa = m.get(arbol, ide)
     grafo = me.getValue(mapa)
     arcos = gr.edges(grafo)
+
     horas_organizadas = lt.newList("ARRAY_LIST")
     camino_organizado = lt.newList("ARRAY_LIST")
     for i in range(1, lt.size(arcos) + 1):
         elemento = lt.getElement(arcos, i)
-        lt.addLast(horas_organizadas, elemento["inicio"])
+        corre_hora = str(elemento["inicio"])
+        corre_hora = datetime.datetime.strptime(corre_hora, "%H:%M:%S.%f")
+        corre_hora = datetime.datetime.time(corre_hora)
+        lt.addLast(horas_organizadas, corre_hora)
     mge.mergesort(horas_organizadas, comparador_horas)
+
     for i in range(1, lt.size(horas_organizadas) + 1):
         hora = lt.getElement(horas_organizadas, i)
         for e in range(1, lt.size(arcos) + 1):
             arco = lt.getElement(arcos, e)
-            if arco["inicio"] == hora:
+            corre_hora = str(arco["inicio"])
+            corre_hora = datetime.datetime.strptime(corre_hora, "%H:%M:%S.%f")
+            corre_hora = datetime.datetime.time(corre_hora)
+            arco["inicio"] = corre_hora
+            if corre_hora == hora:
                 lt.addLast(camino_organizado, arco)
+
     for i in range(1, lt.size(camino_organizado) + 1):
         elemento = lt.getElement(camino_organizado, i)
         if i == 1:
@@ -915,7 +924,7 @@ def caminos_candidatos(caminox, grafo, final, rango1, rango2):
                 juntos = gr.getEdge(grafo["graph"], verticeA, verticeB)
                 if lt.size(CAM) == 0:
                     juntos["weight"] /= 60
-                    juntos["weight"] += 40
+                    juntos["weight"] += 20
                 else:
                     juntos["weight"] /= 60
                     juntos["weight"] += 20
